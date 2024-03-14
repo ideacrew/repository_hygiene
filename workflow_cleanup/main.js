@@ -90,6 +90,7 @@ async function main(owner, repo, beforeDate) {
       let remainder = BATCH_LIMIT - count;
       let toProcess = runs.slice(0, remainder);
       await doParaDelete(octokit, owner, repo, toProcess);
+      core.notice(`Processed ${count + remainder} total workflows.`, {file: "workflow_cleanup/main.js"});
       core.warning(`We currently limit batch cleanup to ${BATCH_LIMIT} at a time - and we've hit it.`);
       return ;    
     } else {
@@ -101,6 +102,7 @@ async function main(owner, repo, beforeDate) {
     runs = workflow_response.data.workflow_runs;
     core.info(`Found ${runs.length} more workflows.`);
   }
+  core.notice(`Processed ${count} total workflows.`, {file: "workflow_cleanup/main.js"});
 };
 
 main(owner, repoName, dateCriteria);
