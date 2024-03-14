@@ -49,7 +49,9 @@ async function deleteWorkflowRun(kit, owner, repo, run) {
   if(status == 204) {
     core.debug(`Deleted workflow run ${run.id}.`)
   } else {
-    throw new Error(`Something went wrong while deleting workflow "${run.head_commit.message}" with ID:${run.id}. Status code: ${status}`);
+    const err = new Error(`Something went wrong while deleting workflow "${run.head_commit.message}" with ID:${run.id}. Status code: ${status}`);
+    core.error(err);
+    throw err;
   }
 }
 
