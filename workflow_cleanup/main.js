@@ -1,6 +1,7 @@
 const { Octokit } = require("@octokit/rest");
 const core = require("@actions/core");
 
+const BATCH_SIZE = 50;
 const BATCH_LIMIT = 400;
 
 const ENVIRONMENT = process.env;
@@ -32,7 +33,7 @@ function requestWorkflowBatch(kit, owner, repo, dateQuery) {
     owner: owner,
     repo: repo,
     created: dateQuery,
-    per_page: 50
+    per_page: BATCH_SIZE
   });
 };
 
@@ -73,11 +74,12 @@ async function main(owner, repo, beforeDate) {
     auth: GITHUB_TOKEN
   });
 
+  core.info(`Requesting ${BATCH_SIZE} initial workflows.`);
   let workflow_response = await requestWorkflowBatch(octokit, owner, repo, beforeDate);
 
   let runs = workflow_response.data.workflow_runs;
 
-  core.info(`Found ${runs.length} workflows.`);
+  core.info(`Found ${runs.length} initial workflows.`);
 
   let count = 0;
 
@@ -92,9 +94,10 @@ async function main(owner, repo, beforeDate) {
       await doParaDelete(octokit, owner, repo, runs);
       count = count + runs.length;
     }
-
+    core.info(`Requesting ${BATCH_SIZE} more workflows.`);
     workflow_response = await requestWorkflowBatch(octokit, owner, repo, beforeDate);
     runs = workflow_response.data.workflow_runs;
+    core.info(`Found ${runs.length} more workflows.`);
   }
 };
 
