@@ -86,7 +86,7 @@ async function main(owner, repo, beforeDate) {
       let remainder = BATCH_LIMIT - count;
       let toProcess = runs.slice(0, remainder);
       await doParaDelete(octokit, owner, repo, toProcess);
-      core.warn(`We currently limit batch cleanup to ${BATCH_LIMIT} at a time - and we've hit it.`);
+      core.warning(`We currently limit batch cleanup to ${BATCH_LIMIT} at a time - and we've hit it.`);
       return ;    
     } else {
       await doParaDelete(octokit, owner, repo, runs);
