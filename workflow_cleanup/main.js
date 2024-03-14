@@ -46,9 +46,8 @@ async function deleteWorkflowRun(kit, owner, repo, run) {
   let { status } = await kit.actions.deleteWorkflowRun(deleteParameters);
 
   if(status == 204) {
-    core.info(`Deleted workflow run ${run.id}.`)
-  }
-  else{
+    core.debug(`Deleted workflow run ${run.id}.`)
+  } else {
     throw new Error(`Something went wrong while deleting workflow "${run.head_commit.message}" with ID:${run.id}. Status code: ${status}`);
   }
 }
@@ -87,7 +86,7 @@ async function main(owner, repo, beforeDate) {
       let remainder = BATCH_LIMIT - count;
       let toProcess = runs.slice(0, remainder);
       await doParaDelete(octokit, owner, repo, toProcess);
-      core.info(`We currently limit batch cleanup to ${BATCH_LIMIT} at a time - and we've hit it.`);
+      core.warn(`We currently limit batch cleanup to ${BATCH_LIMIT} at a time - and we've hit it.`);
       return ;    
     } else {
       await doParaDelete(octokit, owner, repo, runs);
